@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>👤 Личный кабинет</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+</head>
+
+<body>
+  <h2>👤 Личный кабинет</h2>
+<p>Привет, <span id="cabinetUser"></span>!</p>
+
+<h3>🏆 Мои победы</h3>
+<table id="myWinsTable" border="1" width="100%">
+  <thead>
+    <tr>
+      <th>Лот</th>
+      <th>Ставка</th>
+      <th>Дата</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<button class="btn-download" onclick="downloadMyWins()">⬇️ Скачать победы (Excel)</button>
+
+
+
+    <br />
+    <a href="feedback.html">✉️ Обратная связь</a> |
+    
+    
+ 
+  </div>
+  <!-- Навигация -->
+<div style="margin-top:20px;">
+  <!-- ↩ Вернуться в аукцион без выхода -->
+  <a href="index.html?from=cabinet" class="btn">← Назад</a>
+
+  <a href="archive.html" class="btn" style="background:#6c757d;">🗂️ Архив лотов</a>
+
+  <!-- 🚪 Полный выход -->
+  <a href="index.html" class="btn" style="background:#dc3545;" onclick="logout()">🚪 Выйти</a>
+</div>
+
+  
+  <script src="auction.js"></script>
+  <script>
+    // ✅ Проверка текущего пользователя
+    const user = JSON.parse(localStorage.getItem('currentUser') || localStorage.getItem('auctionUser'));
+    if (!user) location.href = 'index.html';
+    
+
+    
+  // ...существующий код...
+
+  function downloadMyWins() {
+    const table = document.getElementById('myWinsTable');
+    const rows = Array.from(table.querySelectorAll('tr')).slice(1);
+    if (rows.length === 0) return alert("Нет данных для экспорта");
+
+    const data = rows.map(tr => {
+      const cells = tr.querySelectorAll('td');
+      return {
+        "Лот": cells[0].textContent,
+        "Ставка": cells[1].textContent,
+        "Дата": cells[2].textContent
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Мои победы");
+    XLSX.writeFile(wb, "my-wins.xlsx");
+  }
+
+  function downloadMyBids() {
+    const table = document.getElementById('myBidsTable');
+    const rows = Array.from(table.querySelectorAll('tr')).slice(1);
+    if (rows.length === 0) return alert("Нет данных для экспорта");
+
+    const data = rows.map(tr => {
+      const cells = tr.querySelectorAll('td');
+      return {
+        "Лот": cells[0].textContent,
+        "Ставка": cells[1].textContent,
+        "Дата": cells[2].textContent
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Мои ставки");
+    XLSX.writeFile(wb, "my-bids.xlsx");
+  }
+
+
+
+    // ✅ Проверка победы и тост
+    const toast = localStorage.getItem('pendingToast');
+    if (toast) {
+      showToast(toast);
+      localStorage.removeItem('pendingToast');
+    }
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('auctionUser');
+    }
+    function goBackToAuction() {
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('auctionUser');
+    }
+    
+    
+  </script>
+</body>
+</html>

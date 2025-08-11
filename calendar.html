@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>📅 Календарь торгов</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <style>
+    #calendar {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📅 Календарь запланированных лотов</h2>
+    <div id="calendar"></div>
+    <br>
+    <a href="index.html?from=cabinet" class="btn">← Назад</a>
+
+  </div>
+
+  <script>
+    const lots = JSON.parse(localStorage.getItem('lots') || '[]');
+
+    // Только запланированные
+    const scheduledLots = lots.filter(lot => lot.status === 'scheduled');
+
+    const events = scheduledLots.map(lot => ({
+      title: lot.title,
+      start: new Date(lot.startTime).toISOString(),
+      description: `Категория: ${lot.category} | Цена: ${lot.price} сом | Размер: ${lot.size}`
+    }));
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'ru',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek'
+        },
+        events: events,
+        eventClick: function(info) {
+          alert(`📦 ${info.event.title}\n\n${info.event.extendedProps.description}`);
+        }
+      });
+
+      calendar.render();
+    });
+  </script>
+</body>
+</html>

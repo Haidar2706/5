@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>📜 История ставок</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .history-container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .history-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .history-table th, .history-table td {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    .status-win { color: green; font-weight: bold; }
+    .status-lose { color: red; }
+    .status-active { color: #007bff; }
+    .btn-download {
+      margin-top: 15px;
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="history-container">
+  <h2>📜 Моя история ставок</h2>
+  <div class="history-controls">
+    <label>
+      Показать:
+      <select id="filterSelect">
+        <option value="all">Все ставки</option>
+        <option value="win">Только выигранные</option>
+        <option value="active">Активные</option>
+      </select>
+    </label>
+    <a href="index.html?from=cabinet" class="btn">← Назад</a>
+
+  </div>
+
+  <table class="history-table" id="historyTable">
+    <thead>
+      <tr>
+        <th>Лот</th>
+        <th>Моя ставка</th>
+        <th>Дата</th>
+        <th>Статус</th>
+      </tr>
+    </thead>
+    <tbody id="historyBody"></tbody>
+  </table>
+  <button class="btn-download" onclick="downloadHistory()">⬇️ Скачать историю (JSON)</button>
+<button class="btn-download" onclick="downloadHistoryExcel()">📊 Скачать историю (Excel)</button>
+</div>
+
+<!-- ✅ Подключаем XLSX -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+   currentUser = JSON.parse(localStorage.getItem('auctionUser') || 'null');
+  const lots = JSON.parse(localStorage.getItem('lots') || '[]');
+  const winners = JSON.parse(localStorage.getItem('winners') || '[]');
+  const historyBody = document.getElementById('historyBody');
+  const filterSelect = document.getElementById('filterSelect');
+
+  if (!currentUser) {
+    document.body.innerHTML = `<div class='history-container'><p>❌ Вы не авторизованы. Вернитесь на <a href='index.html'>главную</a>.</p></div>`;
+  } else {
+    renderHistory('all');
+  }
+
+  filterSelect?.addEventListener('change', e => {
+    renderHistory(e.target.value);
+  });
+
+  function renderHistory(filter) {
+    historyBody.innerHTML = '';
+
+    const myBids = [];
+    lots.forEach(lot => {
+      lot.bids?.forEach(bid => {
+        if (bid.user === currentUser.username) {
+          const isWinner = winners.some(w => w.title === lot.title && w.winner === bid.user);
+          const status = lot.status === 'active' ? 'active' : (isWinner ? 'win' : 'lose');
+          myBids.push({
+            title: lot.title,
+            amount: bid.amount,
+            date: new Date(bid.time).toLocaleString(),
+            status
+          });
+        }
+      });
+    });
+
+    const filtered = myBids.filter(b => {
+      if (filter === 'win') return b.status === 'win';
+      if (filter === 'active') return b.status === 'active';
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      historyBody.innerHTML = `<tr><td colspan='4'>😔 Нет ставок для выбранного фильтра</td></tr>`;
+      return;
+    }
+
+    filtered.forEach(b => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${b.title}</td>
+        <td>${b.amount} сом</td>
+        <td>${b.date}</td>
+        <td class="${b.status === 'win' ? 'status-win' : b.status === 'lose' ? 'status-lose' : 'status-active'}">
+          ${b.status === 'win' ? '✅ Выигран' : b.status === 'lose' ? '❌ Проигран' : '⏳ Активен'}
+        </td>
+      `;
+      historyBody.appendChild(tr);
+    });
+  }
+
+  function downloadHistory() {
+    const rows = [];
+    document.querySelectorAll('#historyBody tr').forEach(tr => {
+      const cols = tr.querySelectorAll('td');
+      rows.push({
+        lot: cols[0].textContent,
+        bid: cols[1].textContent,
+        date: cols[2].textContent,
+        status: cols[3].textContent
+      });
+    });
+    const blob = new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `my-bids-history.json`;
+    link.click();
+  }
+
+  // ✅ Новая функция Excel
+  function downloadHistoryExcel() {
+    const rows = [];
+    document.querySelectorAll('#historyBody tr').forEach(tr => {
+      const cols = tr.querySelectorAll('td');
+      rows.push({
+        "Лот": cols[0].textContent,
+        "Ставка": cols[1].textContent,
+        "Дата": cols[2].textContent,
+        "Статус": cols[3].textContent
+      });
+    });
+
+    if (rows.length === 0) {
+      alert("Нет данных для экспорта");
+      return;
+    }
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "История ставок");
+    XLSX.writeFile(wb, `my-bids-history.xlsx`);
+  }
+</script>
+</body>
+</html>

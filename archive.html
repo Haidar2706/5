@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>🗂️ Архив лотов</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>🗂️ Завершённые лоты</h2>
+
+    <input type="text" id="searchArchived" placeholder="🔍 Поиск по названию..." style="width:100%;margin-bottom:15px;padding:10px;">
+
+    <table id="archiveTable">
+      <thead>
+        <tr>
+          <th>Лот</th>
+          <th>Категория</th>
+          <th>Размер</th>
+          <th>Начальная цена</th>
+          <th>Ставок</th>
+          <th>Завершён</th>
+        </tr>
+      </thead>
+      <tbody id="archiveBody"></tbody>
+    </table>
+
+    <br>
+<button class="btn" onclick="downloadArchive()">⬇️ Скачать архив (Excel)</button>
+<button class="btn" style="background:#dc3545;" onclick="clearArchive()">🗑 Очистить архив</button>
+<button class="btn" style="background:#28a745;" onclick="restoreLastLot()">♻️ Восстановить последний лот</button>
+<a href="index.html?from=cabinet" class="btn">← Назад</a>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    const archived = JSON.parse(localStorage.getItem('archivedLots') || '[]');
+    const tbody = document.getElementById('archiveBody');
+    const searchInput = document.getElementById('searchArchived');
+
+    function renderArchive(filter = '') {
+      tbody.innerHTML = '';
+
+      const filtered = archived.filter(lot => lot.title.toLowerCase().includes(filter.toLowerCase()));
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">😔 Нет завершённых лотов</td></tr>';
+        return;
+      }
+
+      filtered.forEach(lot => {
+        const date = lot.endTime ? new Date(lot.endTime).toLocaleString() : '—';
+        tbody.innerHTML += `
+          <tr>
+            <td>${lot.title}</td>
+            <td>${lot.category}</td>
+            <td>${lot.size || '-'}</td>
+            <td>${lot.price} сом</td>
+            <td>${lot.bids.length}</td>
+            <td>${date}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function downloadArchive() {
+      if (!archived.length) return alert('Архив пуст');
+
+      const rows = archived.map(lot => ({
+        "Лот": lot.title,
+        "Категория": lot.category,
+        "Размер": lot.size,
+        "Стартовая цена": lot.price,
+        "Ставок": lot.bids.length,
+        "Завершён": lot.endTime ? new Date(lot.endTime).toLocaleString() : ''
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Архив лотов");
+
+      XLSX.writeFile(wb, 'archive-lots.xlsx');
+    }
+
+    searchInput.addEventListener('input', () => {
+      renderArchive(searchInput.value);
+    });
+
+    function clearArchive() {
+  if (!confirm("Вы уверены, что хотите удалить весь архив?")) return;
+  localStorage.removeItem('archivedLots');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">📭 Архив очищен</td></tr>';
+  alert("✅ Архив очищен");
+}
+
+function restoreLastLot() {
+  let archived = JSON.parse(localStorage.getItem('archivedLots') || '[]');
+  if (!archived.length) return alert("❌ Архив пуст");
+
+  const lot = archived.pop(); // последний
+  const activeLots = JSON.parse(localStorage.getItem('lots') || '[]');
+  lot.status = 'active'; // возвращаем в активные
+  lot.endTime = Date.now() + 5 * 60 * 1000; // +5 минут (можно менять)
+
+  activeLots.push(lot);
+
+  localStorage.setItem('archivedLots', JSON.stringify(archived));
+  localStorage.setItem('lots', JSON.stringify(activeLots));
+
+  alert(`✅ Лот "${lot.title}" восстановлен и снова активен!`);
+  renderArchive();
+}
+
+
+    renderArchive();
+  </script>
+</body>
+</html>

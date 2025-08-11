@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Скоро на аукционе</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="auction.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h2>🕒 Запланированные лоты</h2>
+    <a href="index.html?from=cabinet" class="btn">← Назад</a>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Название</th>
+            <th>Категория</th>
+            <th>Размер</th>
+            <th>Стартовая цена</th>
+            <th>Начало торгов</th>
+          </tr>
+        </thead>
+        <tbody id="soonLotsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const storedLots = JSON.parse(localStorage.getItem('lots') || '[]');
+      const soonLotsBody = document.getElementById('soonLotsBody');
+      const now = Date.now();
+
+      const soonLots = storedLots.filter(lot => lot.status === 'scheduled');
+
+      if (soonLots.length === 0) {
+        soonLotsBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">😴 Пока нет запланированных лотов</td></tr>`;
+        return;
+      }
+
+      soonLots.forEach((lot, index) => {
+        const start = new Date(lot.startTime).toLocaleString();
+        soonLotsBody.innerHTML += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${lot.title}</td>
+            <td>${lot.category}</td>
+            <td>${lot.size || '-'}</td>
+            <td>${lot.price} сом</td>
+            <td>${start}</td>
+          </tr>
+        `;
+      });
+    });
+  </script>
+</body>
+</html>

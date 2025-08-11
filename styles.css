@@ -1,0 +1,427 @@
+/* === Новый улучшенный стиль === */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #e0f7fa, #ffffff);
+  color: #333;
+}
+
+h1, h2, h3, h4 {
+  text-align: center;
+  color: #222;
+  margin-bottom: 15px;
+}
+
+.hidden {
+  display: none;
+}
+
+.error {
+  color: #d9534f;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.login-box, .main-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  margin-top: 50px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="datetime-local"],
+select {
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  width: 100%;
+  max-width: 350px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+button, .btn {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover, .btn:hover {
+  background-color: #0056b3;
+}
+
+#logoutBtn {
+  background-color: #dc3545;
+}
+#logoutBtn:hover {
+  background-color: #b02a37;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background: white;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+th {
+  background-color: #f8f8f8;
+  font-weight: bold;
+  color: #333;
+}
+
+.admin-panel {
+  margin-top: 25px;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Кнопки ссылок */
+a.btn {
+  display: inline-block;
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+/* История ставок */
+.history-container {
+  max-width: 800px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th, .history-table td {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.status-win {
+  color: green;
+  font-weight: bold;
+}
+.status-lose {
+  color: red;
+}
+.status-active {
+  color: #007bff;
+}
+
+.btn-download {
+  margin-top: 15px;
+  padding: 10px 15px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-download:hover {
+  background: #0056b3;
+}
+
+/* Адаптация под мобильные устройства */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  .login-box, .main-box {
+    margin-top: 20px;
+    padding: 15px;
+  }
+  table {
+    font-size: 12px;
+  }
+  th, td {
+    padding: 6px;
+  }
+  button, .btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}.sort-panel {
+  margin: 10px 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+#nextAuctionBanner {
+  display: none;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #d9534f;
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+body.dark {
+  background: linear-gradient(135deg, #1c1c1c, #333);
+  color: #f0f0f0;
+}
+
+body.dark .main-box,
+body.dark .login-box,
+body.dark .history-container,
+body.dark table {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+body.dark table th {
+  background: #3a3a3a;
+}
+
+body.dark a,
+body.dark .btn {
+  color: white;
+}
+.fade-row {
+  opacity: 0;
+  animation: fadeRow 0.5s ease forwards;
+}
+
+@keyframes fadeRow {
+  to {
+    opacity: 1;
+  }
+}
+.login-box {
+  max-width: 400px;
+  margin: 100px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 14px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+tr.status-active {
+  background-color: #e6f4ea;
+}
+
+tr.status-scheduled {
+  background-color: #e6effc;
+}
+
+tr.status-finished {
+  background-color: #f0f0f0;
+}
+
+button {
+  padding: 6px 10px;
+  border: none;
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+button:hover {
+  background-color: #0b5ed7;
+}
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 800px; /* защита от сжатия */
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  table {
+    font-size: 13px;
+    min-width: 600px;
+  }
+
+  button {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  input[type="number"],
+  input[type="text"] {
+    width: 80px;
+    font-size: 12px;
+  }
+
+  /* Можно скрыть малозначимые колонки */
+  td:nth-child(2),  /* категория */
+  td:nth-child(4),  /* объём */
+  td:nth-child(8),  /* порядковый номер */
+  td:nth-child(15)  /* статус повторный */ {
+    display: none;
+  }
+
+  th:nth-child(2),
+  th:nth-child(4),
+  th:nth-child(8),
+  th:nth-child(15) {
+    display: none;
+  }
+}
+/* В styles.css */
+@keyframes blink {
+  0% { background: #fff2f2; }
+  50% { background: #ffd6d6; }
+  100% { background: #fff2f2; }
+}
+
+.blink-animation {
+  animation: blink 1s 3;
+}
+/* В styles.css */
+@media (max-width: 768px) {
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  table {
+    min-width: 600px; /* Шире экрана */
+  }
+}
+/* Таблица истории пользователей */
+#usersHistoryTable {
+  width: 100%;
+  margin-top: 15px;
+}
+
+#usersHistoryTable th {
+  background: #f4f4f4;
+}
+
+.admin-controls {
+  display: flex;
+  gap: 15px;
+  margin: 15px 0;
+  align-items: center;
+}
+.btn-delete {
+  background: #dc3545;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background: #bb2d3b;
+}
+
+.btn-delete:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+/* В styles.css */
+@media (max-width: 768px) {
+  .lot-card {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .bid-buttons {
+    display: flex;
+    gap: 5px;
+  }
+}
